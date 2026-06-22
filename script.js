@@ -111,12 +111,11 @@ function updateMap() {
   map.setFilter("zr_Gebaeude3D_oeffentlich", ["all",timefilter,["match",["get", "klasse"],["DTK25-NDFK","Gebäude für Wirtschaft oder Gewerbe","Wohngebäude","Überdachung","Garage","Nach Quellenlage nicht zu spezifizieren","Umformer","Brücke","Wehr","Wasserbehälter","Historische Mauer","Kaserne","Tiefgarage","Parkhaus","Staumauer","Kammerschleuse"],false,true]]);
   map.setFilter("zr_Symbol_VerkehrP_Parkplatz", ["all",timefilter,["match",["get", "klasse"],["Parkplatz","Parkplatz auf Festplatz","Rastplatz"],true,false]]);
   map.setFilter("zr_Symbol_BauwerkP_Brunnen", ["all",timefilter,["match",["get", "klasse"],["Brunnen","Brunnen (Trinkwasserversorgung)"],true,false]]);
-  //map.setFilter("zr_Name_SiedlungF_Klaer", ["all",timefilter,["match",["get", "klasse"],["Kläranlage, Klärwerk"],true,false]]);
+  map.setFilter("zr_Name_SiedlungF_Klaer", ["all",timefilter,["match",["get", "klasse"],["Kläranlage, Klärwerk"],true,false]]);
   map.setFilter("zr_Name_Punkt_3_nach_Flaeche", ["all",timefilter,["match",["get", "klasse"],["See","Gedenkstätte, Denkmal, Denkstein, Standbild","Sonstiges","Naturschutzgebiet","Haltepunkt","Haltestelle","Laub- und Nadelholz","Laubholz","Nadelholz","Wald","Parkplatz","Rastplatz","Raststätte","Förderanlage","Kraftwerk"],false,true],["any",["has", "name"],["has", "art"]],["case",[">=", ["zoom"], 17],true,[">=", ["zoom"], 16],[">", ["get", "flaeche"], 40],[">=", ["zoom"], 15],[">", ["get", "flaeche"], 150],[">=", ["zoom"], 14],[">", ["get", "flaeche"], 600],[">=", ["zoom"], 13],[">", ["get", "flaeche"], 2500],[">", ["get", "flaeche"], 4000]]]);
   map.setFilter("zr_Symbol_SiedlungF_Kraftwerk", ["all",timefilter,["==",["get", "klasse"],"Kraftwerk"]]);
   map.setFilter("zr_Symbol_Historischer_Punkt", ["all",timefilter,[">=", ["zoom"], 14],["match",["get", "klasse"],["Gedenkstätte, Denkmal, Denkstein, Standbild","Bildstock, Wegekreuz, Gipfelkreuz","Grab","Grabhügel (Hügelgrab)"],true,false]]);
-  //map.setFilter("zr_POI_Naturdenkmal_Nicht-Baum", ["all",timefilter,["==",["get", "klasse"],"Naturdenkmal"],["!"["==", ["get", "art"], "Baum"]]]);
-  //map.setFilter("zr_POI_Naturdenkmal_Baum", ["all",timefilter,["==",["get", "klasse"],"Naturdenkmal"],["==", ["get", "art"], "Baum"]]);
+  map.setFilter("zr_POI_Naturdenkmal_Baum", ["all",timefilter,["==",["get", "klasse"],"Naturdenkmal"],["==", ["get", "art"], "Baum"]]);
   map.setFilter("zr_POI_z16", ["all",timefilter,["match",["get", "klasse"],["Spielplatz","Barriere_offen","Barriere_geschlossen","Wassertretstelle"],true,false]]);
   map.setFilter("zr_POI_z15", ["all",timefilter,["match",["get", "klasse"],["Kindergarten/Kinderhaus","Rettungstreffpunkt"],true,false]]);
   map.setFilter("zr_POI_z14", ["all",timefilter,["match",["get", "klasse"],["Schule","Feuerwehr","Rathaus","Bildstock"],true,false]]);
@@ -230,13 +229,15 @@ luftbildToggle.addEventListener("change", () => {
     }
     });
 
-//Laden der Karten und Layer
+//Initialisierung zur Verwendung von PMTiles
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
 const p = new pmtiles.PMTiles("zeitreise3857.pmtiles");
 protocol.add(p);
+
+//Laden der Karten und Layer
 
 const map = new maplibregl.Map({
         container: 'map',
@@ -261,8 +262,7 @@ const map = new maplibregl.Map({
     map.on('load', () => {
         map.addSource('zr', {
             type: 'vector',
-            //url: "pmtiles://127.0.0.1:5500/zeitreise3857.pmtiles"
-            //url: "pmtiles://zeitreise3857.pmtiles"
+            //url: "http://127.0.0.1:8080/xyz/zeitreise_3857.json"
             url: "pmtiles://https://dhthws1.github.io/zeitreise-edelsfeld-test/zeitreise3857.pmtiles"
         }
     );
@@ -331,11 +331,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "Vegetationsflaeche",
             "minzoom": 11,
-            "filter": [
-                "==",
-                ["get", "klasse"],
-                "Gehölz"
-            ],
             "paint": {
                 "fill-color": [
                 "interpolate",
@@ -420,17 +415,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "Siedlungsflaeche",
             "minzoom": 11,
-            "filter": [
-                "match",
-                ["get", "klasse"],
-                [
-                "Tagebau, Grube, Steinbruch",
-                "Bergbau",
-                "Halde"
-                ],
-                true,
-                false
-            ],
             "paint": {
                 "fill-color": "rgb(214,210,219)"
             }
@@ -494,17 +478,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "Siedlungsflaeche",
             "minzoom": 8,
-            "filter": [
-                "all",
-                [
-                "match",
-                ["get", "klasse"],
-                ["Siedlung"],
-                true,
-                false
-                ],
-                ["!", ["has", "funktion"]]
-            ],
             "paint": {
                 "fill-color": [
                 "interpolate",
@@ -639,7 +612,8 @@ const map = new maplibregl.Map({
             "type": "fill",
             "source": "zr",
             "source-layer": "Verkehrswegflaeche",
-            "minzoom": 16,
+            "minzoom": 18,
+            "layout":{"visibility": "none"},
             "paint": {
                 "fill-color":"rgb(90,90,90)",
                 "fill-outline-color":"rgb(90,90,90)"}
@@ -846,7 +820,7 @@ const map = new maplibregl.Map({
             "type": "line",
             "source": "zr",
             "source-layer": "Verkehrslinie",
-            "minzoom": 15.99,
+            "minzoom": 16,,
             "layout": {
                 "line-join": "round",
                 "line-cap": "round"
@@ -1451,11 +1425,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "Bauwerkspunkt",
             "minzoom": 12,
-            "filter": [
-                "==",
-                ["get", "klasse"],
-                "Freileitungsmast"
-            ],
             "layout": {
                 "icon-image": [
                 "image",
@@ -1678,31 +1647,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "Verkehrslinie",
             "minzoom": 14.5,
-            "filter": [
-                "all",
-                [
-                "match",
-                ["get", "verkehrsbedeutung1"],
-                [
-                    "Anliegerstraße",
-                    "Fahrradstraße",
-                    "Rastplatz-, Raststättenachse",
-                    "Verkehrsberuhigter Bereich"
-                ],
-                true,
-                false
-                ],
-                [
-                "any",
-                ["!", ["has", "fahrbahn"]],
-                ["has", "fahrbahnachse"]
-                ],
-                [
-                "any",
-                ["has", "name"],
-                ["has", "name_kurz"]
-                ]
-            ],
             "layout": {
                 "symbol-placement": [
                 "step",
@@ -2028,35 +1972,36 @@ const map = new maplibregl.Map({
             }
         });
 
-        // map.addLayer({
-        //     "id": "zr_Name_SiedlungF_Klaer",
-        //     "type": "symbol",
-        //     "source": "zr",
-        //     "source-layer": "Name_Punkt_3",
-        //     "minzoom": 14.5,
-        //     "layout": {
-        //         "text-field": "Klär",
-        //         "text-font": ["Noto Sans Italic"],
-        //         "text-padding": 0,
-        //         "text-size": [
-        //         "interpolate",
-        //         ["linear"],
-        //         ["zoom"],
-        //         14,
-        //         11,
-        //         20,
-        //         15
-        //         ],
-        //         "text-rotation-alignment": "viewport",
-        //         "text-pitch-alignment": "map"
-        //     },
-        //     "paint": {
-        //         "text-color": "#2E65E4",
-        //         "text-halo-blur": 0.5,
-        //         "text-halo-color": "rgb(255,253,238)",
-        //         "text-halo-width": 1.5
-        //     }
-        // });
+
+        map.addLayer({
+            "id": "zr_Name_SiedlungF_Klaer",
+            "type": "symbol",
+            "source": "zr",
+            "source-layer": "Name_Punkt_3",
+            "minzoom": 14.5,
+            "layout": {
+                "text-field": "Klär",
+                "text-font": ["Noto Sans Italic"],
+                "text-padding": 0,
+                "text-size": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                14,
+                11,
+                20,
+                15
+                ],
+                "text-rotation-alignment": "viewport",
+                "text-pitch-alignment": "map"
+            },
+            "paint": {
+                "text-color": "#2E65E4",
+                "text-halo-blur": 0.5,
+                "text-halo-color": "rgb(255,253,238)",
+                "text-halo-width": 1.5
+            }
+        });
 
         map.addLayer({
             "id": "zr_Name_Punkt_3_nach_Flaeche",
@@ -2207,122 +2152,58 @@ const map = new maplibregl.Map({
             }
         });
 
-        // map.addLayer({
-        //     "id": "zr_POI_Naturdenkmal_Nicht-Baum",
-        //     "type": "symbol",
-        //     "source": "zr",
-        //     "source-layer": "POI_Punkt",
-        //     "minzoom": 16,
-        //     // "filter": [
-        //     //     "all",
-        //     //     [
-        //     //     "==",
-        //     //     ["get", "klasse"],
-        //     //     "Naturdenkmal"
-        //     //     ],
-        //     //     [
-        //     //     "!",
-        //     //     ["==", ["get", "art"], "Baum"]
-        //     //     ]
-        //     // ],
-        //     "layout": {
-        //         "icon-image": [
-        //         "image",
-        //         "Naturdenkmal"
-        //         ],
-        //         "icon-size": [
-        //         "interpolate",
-        //         ["linear"],
-        //         ["zoom"],
-        //         10,
-        //         0.5,
-        //         20,
-        //         1
-        //         ],
-        //         "text-font": ["Noto Sans Regular"],
-        //         "text-field": [
-        //         "to-string",
-        //         ["get", "name"]
-        //         ],
-        //         "text-radial-offset": 1,
-        //         "text-optional": true,
-        //         "text-size": [
-        //         "interpolate",
-        //         ["linear"],
-        //         ["zoom"],
-        //         14,
-        //         11,
-        //         20,
-        //         16
-        //         ],
-        //         "text-variable-anchor": [
-        //         "left",
-        //         "right"
-        //         ],
-        //         "text-justify": "auto",
-        //         "icon-padding": 0,
-        //         "text-padding": 0
-        //     },
-        //     "paint": {
-        //         "text-color": "rgb(51, 153, 51)",
-        //         "text-halo-color": "#fffdee",
-        //         "text-halo-width": 1.5,
-        //         "text-halo-blur": 0.5
-        //     }
-        // });
-
-        // map.addLayer({
-        //     "id": "zr_POI_Naturdenkmal_Baum",
-        //     "type": "symbol",
-        //     "source": "zr",
-        //     "source-layer": "POI_Punkt",
-        //     "minzoom": 15,
-        //     "layout": {
-        //         "icon-image": [
-        //         "image",
-        //         ["get", "bewuchs"]
-        //         ],
-        //         "icon-size": [
-        //         "interpolate",
-        //         ["linear"],
-        //         ["zoom"],
-        //         10,
-        //         0.5,
-        //         20,
-        //         1
-        //         ],
-        //         "text-font": ["Noto Sans Italic"],
-        //         "text-field": "ND",
-        //         "text-anchor": "bottom-left",
-        //         "text-radial-offset": 0.6,
-        //         "text-optional": true,
-        //         "text-size": [
-        //         "interpolate",
-        //         ["linear"],
-        //         ["zoom"],
-        //         15,
-        //         11,
-        //         20,
-        //         16
-        //         ],
-        //         "icon-offset": [0, -10],
-        //         "icon-padding": 0,
-        //         "text-padding": 0
-        //     },
-        //     "paint": {
-        //         "text-color": "rgb(51, 153, 51)",
-        //         "text-halo-color": "#fffdee",
-        //         "text-halo-width": 1.5,
-        //         "text-halo-blur": 0.5,
-        //         "text-opacity": [
-        //         "step",
-        //         ["zoom"],
-        //         0,
-        //         17,
-        //         1
-        //         ]
-        //     }
-        // });
+        map.addLayer({
+            "id": "zr_POI_Naturdenkmal_Baum",
+            "type": "symbol",
+            "source": "zr",
+            "source-layer": "POI_Punkt",
+            "minzoom": 15,
+            "layout": {
+                "icon-image": [
+                "image",
+                ["get", "bewuchs"]
+                ],
+                "icon-size": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                10,
+                0.5,
+                20,
+                1
+                ],
+                "text-font": ["Noto Sans Italic"],
+                "text-field": "ND",
+                "text-anchor": "bottom-left",
+                "text-radial-offset": 0.6,
+                "text-optional": true,
+                "text-size": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                15,
+                11,
+                20,
+                16
+                ],
+                "icon-offset": [0, -10],
+                "icon-padding": 0,
+                "text-padding": 0
+            },
+            "paint": {
+                "text-color": "rgb(51, 153, 51)",
+                "text-halo-color": "#fffdee",
+                "text-halo-width": 1.5,
+                "text-halo-blur": 0.5,
+                "text-opacity": [
+                "step",
+                ["zoom"],
+                0,
+                17,
+                1
+                ]
+            }
+        });
 
         map.addLayer({
             "id": "zr_POI_z16",
@@ -2330,33 +2211,6 @@ const map = new maplibregl.Map({
             "source": "zr",
             "source-layer": "POI_Punkt",
             "minzoom": 16,
-            "filter": [
-                "all",
-                [
-                "match",
-                ["get", "klasse"],
-                [
-                    "Spielplatz",
-                    "Barriere_offen",
-                    "Barriere_geschlossen",
-                    "Wassertretstelle"
-                ],
-                true,
-                false
-                ],
-                [
-                "any",
-                ["!", ["has", "zustand"]],
-                [
-                    "!",
-                    [
-                    "==",
-                    ["get", "zustand"],
-                    "Außer Betrieb, stillgelegt, verlassen"
-                    ]
-                ]
-                ]
-            ],
             "layout": {
                 "icon-image": [
                 "match",
@@ -2431,10 +2285,10 @@ const map = new maplibregl.Map({
             "layout": {
                 "icon-image": [
                 "match",
-                ["get", "name"],
+                ["get", "klasse"],
                 "Kindergarten/Kinderhaus",
-                ["image", "Kindergarten"],
-                ["image", ["get", "klasse"]]
+                "Kindergarten",
+                ["get", "klasse"]
                 ],
                 "icon-size": [
                 "interpolate",
