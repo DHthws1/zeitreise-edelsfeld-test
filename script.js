@@ -815,7 +815,7 @@ const map = new maplibregl.Map({
             }
         });
 
-        map.addLayer({
+        map.addLayer({//Fehlerhaft?
             "id": "zr_Kontur_Fusswege_z16",
             "type": "line",
             "source": "zr",
