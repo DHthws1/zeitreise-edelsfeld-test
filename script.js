@@ -262,7 +262,8 @@ const map = new maplibregl.Map({
         map.addSource('zr', {
             type: 'vector',
             //url: "pmtiles://127.0.0.1:5500/zeitreise3857.pmtiles"
-            url: "pmtiles://zeitreise3857.pmtiles"
+            //url: "pmtiles://zeitreise3857.pmtiles"
+            url: "pmtiles://https://dhthws1.github.io/zeitreise-edelsfeld-test/zeitreise3857.pmtiles"
         }
     );
     map.addSource('wms', {
