@@ -820,7 +820,7 @@ const map = new maplibregl.Map({
             "type": "line",
             "source": "zr",
             "source-layer": "Verkehrslinie",
-            "minzoom": 16,,
+            "minzoom": 16,
             "layout": {
                 "line-join": "round",
                 "line-cap": "round"
