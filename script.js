@@ -259,8 +259,6 @@ const map = new maplibregl.Map({
         showCompass: true
     }));
 
-    map.addControl(new maplibregl.NavigationControl());
-
     // Titel nach 5 Sekunden ausblenden
     function hideTitle() {
     document.getElementById("mapTitle").classList.add("hide");
@@ -1831,13 +1829,22 @@ const map = new maplibregl.Map({
             'type': 'fill-extrusion',
             'source': 'zr',
             'source-layer': 'Gebaeudeflaeche',
+            "minzoom": 14,
             "paint": {
             "fill-extrusion-color": "rgb(179,179,179)",
             "fill-extrusion-height": [
             "get",
             "hoehe"
             ],
-            "fill-extrusion-opacity": 0.7
+            "fill-extrusion-opacity": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                14,
+                0,
+                14.5,
+                0.7
+                ]
         }
         });
 
@@ -1847,6 +1854,7 @@ const map = new maplibregl.Map({
             'type': 'fill-extrusion',
             'source': 'zr',
             'source-layer': 'Gebaeudeflaeche',
+            "minzoom": 14.5,
             "paint": {
             "fill-extrusion-color": "rgb(193,160,161)",
             "fill-extrusion-height": [
