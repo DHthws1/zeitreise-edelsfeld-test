@@ -259,6 +259,19 @@ const map = new maplibregl.Map({
         showCompass: true
     }));
 
+    map.addControl(new maplibregl.NavigationControl());
+
+    // Titel nach 5 Sekunden ausblenden
+    function hideTitle() {
+    document.getElementById("mapTitle").classList.add("hide");
+    }
+
+    map.once("dragstart", hideTitle);
+    map.once("zoomstart", hideTitle);
+    map.once("rotatestart", hideTitle);
+
+    setTimeout(hideTitle, 5000);
+
     map.on('load', () => {
         map.addSource('zr', {
             type: 'vector',
@@ -844,7 +857,7 @@ const map = new maplibregl.Map({
             "type": "line",
             "source": "zr",
             "source-layer": "Verkehrslinie",
-            "minzoom": 13,
+            "minzoom": 12,
             "layout": {
                 "line-cap": "round",
                 "line-join": "round"
@@ -876,7 +889,7 @@ const map = new maplibregl.Map({
             "type": "line",
             "source": "zr",
             "source-layer": "Verkehrslinie",
-            "minzoom": 13,
+            "minzoom": 12,
             "layout": {
                 "line-cap": "round",
                 "line-join": "round"
@@ -1117,7 +1130,7 @@ const map = new maplibregl.Map({
             "type": "line",
             "source": "zr",
             "source-layer": "Verkehrslinie",
-            "minzoom": 13,
+            "minzoom": 12,
             "layout": {
                 "line-sort-key": [
                 "case",
@@ -3677,9 +3690,7 @@ const map = new maplibregl.Map({
                 ["get", "klasse"],
                 [
                 "Bergname Gebogen",
-                "Kleinräume kleiner 0.5qkm",
-                "Kleinräume 0.5 bis 2qkm",
-                "Kleinräume 2 bis 10qkm"
+                "Kleinräume kleiner 0.5qkm"
                 ],
                 [
                 "case",

@@ -3,11 +3,68 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* verhindert Scrollen */
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 #map {
   width: 100%;
   height: 100%;
+}
+
+/* Titel-Overlay */
+.map-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    padding: 12px 22px;
+    border-radius: 14px;
+
+    text-align: center;
+    color: #222;
+
+    font-size: 1.9rem;
+    font-weight: bold;
+    line-height: 1.2;
+
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+
+    pointer-events: none;
+
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+.map-title span {
+    display: block;
+    margin-top: 4px;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.map-title.hide {
+    opacity: 0;
+}
+
+@media (max-width: 768px) {
+    .map-title {
+        top: 12px;
+        font-size: 1.25rem;
+        padding: 8px 14px;
+        max-width: 90%;
+    }
+
+    .map-title span {
+        display: none;
+    }
 }
 
 /* Timeslider Container */
@@ -83,7 +140,7 @@ html, body {
 
   z-index: 1000;
 
-  font: 12px "DIN Pro Medium", Arial, Helvetica, sans-serif;
+  font-size: 12px;
 }
 
 .toggle-box p {
